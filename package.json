@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/eecs394-spr15/NUHacks-backend",
   "dependencies": {
-    "express": "^4.12.3"
+    "body-parser": "^1.12.2",
+    "express": "^4.12.3",
+    "mongoose": "^4.0.1",
+    "underscore": "^1.8.3"
   }
 }
