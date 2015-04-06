@@ -1,0 +1,22 @@
+{
+  "name": "NUHacks-backend",
+  "version": "1.0.0",
+  "description": "Backend for NUHacks app in EECS 394",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eecs394-spr15/NUHacks-backend.git"
+  },
+  "author": "Nevil George",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eecs394-spr15/NUHacks-backend/issues"
+  },
+  "homepage": "https://github.com/eecs394-spr15/NUHacks-backend",
+  "dependencies": {
+    "express": "^4.12.3"
+  }
+}
