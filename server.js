@@ -3,7 +3,7 @@
 var express = require('express'),
 	app = express();
 
-app.set('port', (7000 || process.env.PORT));
+app.set('port', (process.env.PORT || 7000));
 
 app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
