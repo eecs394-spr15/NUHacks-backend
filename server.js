@@ -16,7 +16,8 @@ app.use(bodyParser.json())
 
 db.on('error', console.error);
 // mongoose.connect('mongodb://liven93@gmail.com:nevilgeorge@proximus.modulusmongo.net:27017/saMan3oz');
-mongoose.connect('mongodb://localhost:27017/nuhacks');
+// mongoose.connect('mongodb://localhost:27017/nuhacks');
+mongoose.connect('mongodb://' + process.env.DB_NAME + ':' + process.env.DB_PASS + '@ds061691.mongolab.com:61691/nuhacks');
 
 app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
