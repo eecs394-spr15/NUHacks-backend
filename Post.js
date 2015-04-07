@@ -1,10 +1,9 @@
 // Post.js - A MongoDB Schema
 
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+var mongoose = require('mongoose');
 
-var postSchema = new Schema({
-	title: String,
+var postSchema = new mongoose.Schema({
+	text: String,
 	author: String,
 	date: { type: Date, default: Date.now },
 	upvotes: { type: Number, default: 0 },

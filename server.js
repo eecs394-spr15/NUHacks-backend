@@ -15,10 +15,20 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 db.on('error', console.error);
-mongoose.connect('mongodb://liven93@gmail.com:nevilgeorge@proximus.modulusmongo.net:27017/saMan3oz');
+// mongoose.connect('mongodb://liven93@gmail.com:nevilgeorge@proximus.modulusmongo.net:27017/saMan3oz');
+mongoose.connect('mongodb://localhost:27017/nuhacks');
 
 app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
+});
+
+app.get('/posts', function(req, res) {
+	Post.find(function(err, posts) {
+		if (err) {
+			res.send(err);
+		}
+		res.json(posts);
+	})
 });
 
 app.post('/post', function(req, res) {
@@ -26,13 +36,37 @@ app.post('/post', function(req, res) {
 		return res.send(404);
 	}
 	var newPost = new Post();
-	newPost.title = req.body.title;
+	newPost.text = req.body.text;
 	newPost.author = req.body.author;
 	newPost.save(function(err, post) {
 		if (err) {
 			res.send(500, err);
 		}
-		res.send(true);
+		res.json(post);
+	});
+});
+
+app.put('/post/:id', function(req, res) {
+	var id = req.params.id;
+	if (_.isEmpty(req.body)) {
+		return res.send(400);
+	}
+
+	Post.findById(id, function(err, post) {
+		if (err || !post) {
+			return res.send(500);
+		}
+
+		post.upvotes = req.body.upvotes;
+		post.downvotes = req.body.downvotes;
+		post.text = req.body.text;
+
+		post.save(function(err, post) {
+			if (err) {
+				return res.send(500);
+			}
+			res.json(post);
+		});
 	});
 });
 
