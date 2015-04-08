@@ -7,6 +7,7 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
 	// auth = require('./auth.js'),
+	cors = require('cors'),
 	app = express();
 
 app.set('port', (process.env.PORT || 7000));
@@ -14,6 +15,7 @@ app.set('port', (process.env.PORT || 7000));
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json 
 app.use(bodyParser.json())
+app.use(cors());
 
 db.on('error', console.error);
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
