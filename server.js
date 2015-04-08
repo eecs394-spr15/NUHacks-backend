@@ -16,7 +16,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 db.on('error', console.error);
-// mongoose.connect('mongodb://liven93@gmail.com:nevilgeorge@proximus.modulusmongo.net:27017/saMan3oz');
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
 mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
 
@@ -72,7 +71,7 @@ app.put('/post/:id', function(req, res) {
 	});
 });
 
-app.delete('/posts/:id', function(req, res) {
+app.delete('/post/:id', function(req, res) {
 	var id = req.params.id;
 	if (_.isEmpty(req.body)) {
 		return res.send(400);
