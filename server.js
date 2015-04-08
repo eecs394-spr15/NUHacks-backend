@@ -77,6 +77,22 @@ app.delete('/posts/:id', function(req, res) {
 	if (_.isEmpty(req.body)) {
 		return res.send(400);
 	}
+
+	Post.findById(id, function(err, post) {
+		if (err) {
+			return res.send(500, err);
+		}
+		if (!post || _.isEmpty(post)) {
+			return res.send(404);
+		}
+
+		post.remove(function(err) {
+			if (err) {
+				throw res.send(500, err);
+			}
+			res.send(true);
+		});
+	});
 });
 
 app.listen(app.get('port'), function(req, res) {
