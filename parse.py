@@ -11,11 +11,13 @@ url = 'https://dry-coast-1630.herokuapp.com/post'
 for post in data["data"]["children"]:
 	post_params = dict()
 	post_params['author'] = post['data']['author']
-	post_params['title'] = post['data']['title']
+	post_params['text'] = post['data']['title']
 
 	# print(post_params)
 	# print(" ")
-	r = requests.post(url, params=post_params)
+	print post_params
+	r = requests.post(url, data=post_params)
+	print r.text
 	# print(r.text)
 
 

@@ -51,26 +51,26 @@ app.post('/post', function(req, res) {
 
 app.put('/post/:id', function(req, res) {
 	var id = req.params.id;
+	var update = {};
 	if (_.isEmpty(req.body)) {
 		return res.send(400);
 	}
 
-	Post.findById(id, function(err, post) {
-		if (err || !post) {
-			return res.send(500);
+	console.log(req.body);
+	if (req.body.upvotes)
+		update.upvotes = parseInt(req.body.upvotes);
+	if (req.body.downvotes) 
+		update.downvotes = parseInt(req.body.downvotes);
+	if (req.body.text) 
+		update.upvotes = req.body.text;
+
+	Post.update({_id: id}, {$set: update}, function(err, post) {
+		if (err) {
+			return res.send(500, err);
 		}
-
-		post.upvotes = req.body.upvotes;
-		post.downvotes = req.body.downvotes;
-		post.text = req.body.text;
-
-		post.save(function(err, post) {
-			if (err) {
-				return res.send(500);
-			}
-			res.json(post);
-		});
+		res.json(true);
 	});
+
 });
 
 app.delete('/post/:id', function(req, res) {
