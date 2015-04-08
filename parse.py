@@ -15,9 +15,9 @@ for post in data["data"]["children"]:
 
 	# print(post_params)
 	# print(" ")
-	print post_params
+	# print post_params
 	r = requests.post(url, data=post_params)
-	print r.text
+	# print r.text
 	# print(r.text)
 
 
