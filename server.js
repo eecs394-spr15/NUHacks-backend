@@ -62,7 +62,7 @@ app.put('/post/:id', function(req, res) {
 	if (req.body.downvotes) 
 		update.downvotes = parseInt(req.body.downvotes);
 	if (req.body.text) 
-		update.upvotes = req.body.text;
+		update.text = req.body.text;
 
 	Post.update({_id: id}, {$set: update}, function(err, post) {
 		if (err) {
