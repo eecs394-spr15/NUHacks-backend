@@ -19,11 +19,40 @@ app.use(cors());
 
 db.on('error', console.error);
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
+<<<<<<< Updated upstream
 mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
+=======
+mongoose.connect('mongodb://nevilgeorge:nuhacks@ds061691.mongolab.com:61691/nuhacks');
+>>>>>>> Stashed changes
 
 app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
 });
+
+
+
+
+app.get('/post/:id?', function(req, res) {
+	var id =req.params.id;
+	if (_.isEmpty(req.body)) {
+		return res.send(404);
+	}
+	Post.findOne({_id : id})
+	.exec(function(err,post){
+		if (err) {
+			res.send(500, err);
+		}
+		res.json(post);
+	});
+});
+
+
+
+
+
+
+
+
 
 
 app.get('/posts/:page?', function(req, res) {
