@@ -25,14 +25,25 @@ app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
 });
 
-app.get('/posts', function(req, res) {
-	Post.find(function(err, posts) {
+
+app.get('/posts/:page?', function(req, res) {
+	var page = 0;
+	var perPage = 12;
+	if(req.params.page){
+		page = parseInt(req.params.page);
+	}
+
+	Post.find()
+	.limit(perPage)
+    .skip(perPage * page)
+    .exec(function(err, posts) {
 		if (err) {
 			res.send(err);
 		}
 		res.json(posts);
-	})
+	});
 });
+
 
 app.post('/post', function(req, res) {
 	if (_.isEmpty(req.body)) {
