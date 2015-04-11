@@ -34,6 +34,7 @@ app.get('/posts/:page?', function(req, res) {
 	}
 
 	Post.find()
+	.sort('upvotes', 1)
 	.limit(perPage)
     .skip(perPage * page)
     .exec(function(err, posts) {
