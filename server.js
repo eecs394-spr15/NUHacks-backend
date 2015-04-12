@@ -27,10 +27,8 @@ app.get('/', function(req, res) {
 
 
 app.get('/post/:id', function(req, res) {
-	var id =req.params.id;
-	if (_.isEmpty(req.body)) {
-		return res.send(404);
-	}
+	var id = req.params.id;
+
 	Post.findOne({_id : id})
 	.exec(function(err,post){
 		if (err) {
