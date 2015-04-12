@@ -39,16 +39,24 @@ app.get('/post/:id', function(req, res) {
 });
 
 
-app.get('/posts/:page?', function(req, res) {
+app.get('/posts/:page?/:endpage?', function(req, res) {
 	var page = 0;
 	var perPage = 12;
+	var lim = perPage;
 	if(req.params.page){
 		page = parseInt(req.params.page);
+		if(req.params.endpage){
+			if(req.params.endpage < req.params.page){
+				res.send(500);
+			} else{
+				lim = perPage * (1 + req.params.endpage);
+			}
+		}
 	}
 
 	Post.find()
 	.sort('-upvotes')
-	.limit(perPage)
+	.limit(lim)
     .skip(perPage * page)
     .exec(function(err, posts) {
 		if (err) {
