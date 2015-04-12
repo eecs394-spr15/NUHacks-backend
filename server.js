@@ -47,9 +47,9 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 		page = parseInt(req.params.page);
 		if(req.params.endpage){
 			if(req.params.endpage < req.params.page){
-				res.send(500);
+				return res.send(500);
 			} else{
-				lim = perPage * (1 + req.params.endpage);
+				lim = perPage * (1 + req.params.endpage - req.params.page);
 			}
 		}
 	}
