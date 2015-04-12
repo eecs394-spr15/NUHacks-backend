@@ -26,7 +26,7 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/post/:id?', function(req, res) {
+app.get('/post/:id', function(req, res) {
 	var id =req.params.id;
 	if (_.isEmpty(req.body)) {
 		return res.send(404);
@@ -49,7 +49,7 @@ app.get('/posts/:page?', function(req, res) {
 	}
 
 	Post.find()
-	.sort('upvotes')
+	.sort('-upvotes')
 	.limit(perPage)
     .skip(perPage * page)
     .exec(function(err, posts) {
