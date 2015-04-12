@@ -39,7 +39,7 @@ app.get('/post/:id', function(req, res) {
 });
 
 
-app.get('/posts/:page?/:endpage?', function(req, res) {
+app.get('/posts/:page/:endpage?', function(req, res) {
 	var page = 0;
 	var perPage = 12;
 	var lim = perPage;
