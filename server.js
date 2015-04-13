@@ -97,6 +97,8 @@ app.put('/post/:id', function(req, res) {
 		update.downvotes = parseInt(req.body.downvotes);
 	if (req.body.text) 
 		update.text = req.body.text;
+	if (req.body.tags) 
+		update.tags = req.body.tags;
 
 	Post.update({_id: id}, {$set: update}, function(err, post) {
 		if (err) {
