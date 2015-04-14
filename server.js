@@ -70,11 +70,11 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 
 
 app.get('/search/:query', function(req, res){
-	Post.textSearch(req.params.query, function(err, posts){
+	Post.textSearch(req.params.query, function(err, results){
 		if (err) {
 			return res.send(500, err);
 		}
-		res.json(posts);
+		res.json(results.results);
 	});
 });
 
