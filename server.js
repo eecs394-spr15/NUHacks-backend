@@ -83,7 +83,7 @@ app.get('/tags', function(req, res){
 	o = {};
 	o.map = function () {
 		if(typeof(this.tags) == "string"){
-			emit(this.stags, 1);
+			emit(this.tags, 1);
 		} else{
 			this.tags.forEach(function(elem, i, array){
 				emit(elem, 1);
