@@ -78,18 +78,25 @@ app.get('/search/:query', function(req, res){
 	});
 });
 
-/*
-app.get('/tags', function(){
+
+app.get('/tags', function(req, res){
+	o = {};
 	o.map = function () {
-		this.tags.forEach(function(){
-			emit(this.url, 1);
+		this.tags.forEach(function(elem, i, array){
+			emit(elem, 1);
 		});
-	}
+	};
 	o.reduce = function (k, vals) {
-		return k
-	}
-Us
-})*/
+		return k;
+	};
+	Post.mapReduce(o, function (err, results) {
+		if (err) {
+			return res.send(500, err);
+		}
+		res.json(results);
+	});
+});
+
 
 app.post('/post', function(req, res) {
 	if (_.isEmpty(req.body)) {
