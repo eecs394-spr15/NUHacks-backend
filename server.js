@@ -82,9 +82,13 @@ app.get('/search/:query', function(req, res){
 app.get('/tags', function(req, res){
 	o = {};
 	o.map = function () {
-		this.tags.forEach(function(elem, i, array){
-			emit(elem, 1);
-		});
+		if(typeof(this.tags) == "string"){
+			emit(this.stags, 1);
+		} else{
+			this.tags.forEach(function(elem, i, array){
+				emit(elem, 1);
+			});
+		}
 	};
 	o.reduce = function (k, vals) {
 		return k;
