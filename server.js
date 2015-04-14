@@ -80,7 +80,10 @@ app.get('/tags', function(req, res){
 });
 
 app.get('/posts/:page/:endpage?', function(req, res) {
-	sortby = req.query.sortby
+	var sortby = "-upvotes"
+	if(sortby == "-upvotes" || sortby == "-upvotes"){
+		sortby = req.query.sortby;
+	}
 	var page = 0;
 	var perPage = 12;
 	var lim = perPage;
@@ -95,32 +98,17 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 			}
 		}
 	}
-    if(sortby==0)
-    {
-    	Post.find()
-		.sort('-upvotes')
-		.limit(lim)
-    	.skip(perPage * page)
-    	.exec(function(err, posts) {
-			if (err) {
-				res.send(err);
-			}
-			res.json(posts);
-		});
-    }
-    else
-    {
-    	Post.find()
-		.sort('-date')
-		.limit(lim)
-    	.skip(perPage * page)
-    	.exec(function(err, posts) {
-			if (err) {
-				res.send(err);
-			}
-			res.json(posts);
-		});
-    }
+    
+	Post.find()
+	.sort(sortby)
+	.limit(lim)
+	.skip(perPage * page)
+	.exec(function(err, posts) {
+		if (err) {
+			res.send(err);
+		}
+		res.json(posts);
+	});
 	
 });
 
