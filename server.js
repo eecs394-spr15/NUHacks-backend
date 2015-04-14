@@ -70,11 +70,18 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 
 
 app.get('/search/:query', function(req, res){
-	Post.textSearch(req.params.query, function(err, results){
+	options = {
+		limit: 10
+	};
+	Post.textSearch(req.params.query, options, function(err, results){
 		if (err) {
 			return res.send(500, err);
 		}
-		res.json(results.results);
+		lst = [];
+		results.results.forEach(function(elem, i, array){
+			lst.push(elem["obj"]);
+		})
+		res.json(lst);
 	});
 });
 
@@ -91,7 +98,7 @@ app.get('/tags', function(req, res){
 		}
 	};
 	o.reduce = function (k, vals) {
-		return k;
+		return k._id;
 	};
 	Post.mapReduce(o, function (err, results) {
 		if (err) {
