@@ -39,8 +39,7 @@ app.get('/post/:id', function(req, res) {
 	});
 });
 
-
-app.get('/posts/:page/:endpage?', function(req, res) {
+app.get('/dateposts/:page/:endpage?',function(req,res){
 	var page = 0;
 	var perPage = 12;
 	var lim = perPage;
@@ -57,7 +56,7 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 	}
 
 	Post.find()
-	.sort('-upvotes')
+	.sort('-date')
 	.limit(lim)
     .skip(perPage * page)
     .exec(function(err, posts) {
@@ -106,6 +105,51 @@ app.get('/tags', function(req, res){
 		}
 		res.json(results);
 	});
+});
+
+app.get('/posts/:page/:endpage?', function(req, res) {
+	sortby = req.query.sortby
+	var page = 0;
+	var perPage = 12;
+	var lim = perPage;
+	if(req.params.page){
+		page = parseInt(req.params.page);
+		if(req.params.endpage){
+			endpage = parseInt(req.params.endpage);
+			if(endpage < page){
+				return res.send(500);
+			} else{
+				lim = perPage * (1 + endpage - page);
+			}
+		}
+	}
+    if(sortby==0)
+    {
+    	Post.find()
+		.sort('-upvotes')
+		.limit(lim)
+    	.skip(perPage * page)
+    	.exec(function(err, posts) {
+			if (err) {
+				res.send(err);
+			}
+			res.json(posts);
+		});
+    }
+    else
+    {
+    	Post.find()
+		.sort('-date')
+		.limit(lim)
+    	.skip(perPage * page)
+    	.exec(function(err, posts) {
+			if (err) {
+				res.send(err);
+			}
+			res.json(posts);
+		});
+    }
+	
 });
 
 
