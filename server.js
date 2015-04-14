@@ -98,7 +98,7 @@ app.get('/tags', function(req, res){
 		}
 	};
 	o.reduce = function (k, vals) {
-		return k._id;
+		return vals.length;
 	};
 	Post.mapReduce(o, function (err, results) {
 		if (err) {
