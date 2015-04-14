@@ -21,6 +21,7 @@
     "cors": "^2.5.3",
     "express": "^4.12.3",
     "mongoose": "^4.0.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "mongoose-text-search": "^0.0.2"
   }
 }

@@ -2,6 +2,7 @@
 
 var express = require('express'),
 	mongoose = require('mongoose'),
+	textSearch = require('mongoose-text-search'),
 	Post = require('./Post.js'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
@@ -63,10 +64,32 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 		if (err) {
 			res.send(err);
 		}
+		return res.json(posts);
+	});
+});
+
+
+app.get('/search/:query', function(req, res){
+	Post.textSearch(req.params.query, function(err, posts){
+		if (err) {
+			return res.send(500, err);
+		}
 		res.json(posts);
 	});
 });
 
+/*
+app.get('/tags', function(){
+	o.map = function () {
+		this.tags.forEach(function(){
+			emit(this.url, 1);
+		});
+	}
+	o.reduce = function (k, vals) {
+		return k
+	}
+Us
+})*/
 
 app.post('/post', function(req, res) {
 	if (_.isEmpty(req.body)) {
