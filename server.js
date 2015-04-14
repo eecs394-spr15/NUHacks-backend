@@ -81,7 +81,7 @@ app.get('/tags', function(req, res){
 
 app.get('/posts/:page/:endpage?', function(req, res) {
 	var sortby = "-upvotes"
-	if(sortby == "-upvotes" || sortby == "-upvotes"){
+	if(sortby == "-upvotes" || sortby == "-date"){
 		sortby = req.query.sortby;
 	}
 	var page = 0;
