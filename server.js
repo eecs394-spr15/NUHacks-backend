@@ -118,6 +118,7 @@ app.post('/post', function(req, res) {
 		return res.send(404);
 	}
 	var newPost = new Post();
+	newPost.title = req.body.title;
 	newPost.text = req.body.text;
 	newPost.author = req.body.author;
 	newPost.save(function(err, post) {

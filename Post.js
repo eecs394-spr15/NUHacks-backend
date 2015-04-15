@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var textSearch = require('mongoose-text-search');
 
 var postSchema = new mongoose.Schema({
+    title: String,
 	text: String,
 	author: String,
 	date: { type: Date, default: Date.now },
