@@ -40,6 +40,31 @@ app.get('/post/:id', function(req, res) {
 });
 
 
+app.get('/posts/authorId/:id', function(req, res) {
+	var authorId = req.params.id;
+
+	Post.aggregate(
+	    [
+			{ "$group": { 
+			    "_id": "$authorId", 
+			    "posts": {"$push": "$$ROOT"}
+			}},
+			{"$match": {"_id" : authorId}},
+			{"$unwind": "$posts"},
+			{"$sort": { "date": -1 } },
+			{"$limit": 10 }
+	
+		],
+		function(err,result) {
+			if (err) {
+					res.send(500, err)
+			}
+				res.json(result);
+		}
+	);
+});
+
+
 app.get('/search/:query', function(req, res){
 	options = {
 		limit: 10
