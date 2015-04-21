@@ -159,13 +159,9 @@ app.post('/post', function(req, res) {
 	newPost.title = req.body.title;
 	newPost.text = req.body.text;
 	newPost.author = req.body.author;
+	newPost.authorId = req.body.authorId;
 	newPost.tags = req.body.tags;
-	newPost.save(function(err, post) {
-		if (err) {
-			res.send(500, err);
-		}
-		res.json(post);
-	});
+	newPost.save(errorFunction(res));
 });
 
 app.put('/post/:id', function(req, res) {
