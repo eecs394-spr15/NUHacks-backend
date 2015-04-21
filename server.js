@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	//auth = require('./auth.js'),
+	auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
@@ -111,33 +111,6 @@ app.get('/tags', function(req, res){
 	Post.mapReduce(o, errorFunction(res));
 });
 
-var byAuthorId = function(authorId, sortby, lim, skip, res){
-	Post.aggregate(
-	    [
-			{ "$group": { 
-			    "_id": "$authorId", 
-			    "posts": {"$push": "$$ROOT"}
-			}},
-			{"$match": {"_id" : authorId}},
-			{"$unwind": "$posts"},
-			{"$project":{
-			      "_id": "$posts._id",
-			      "authorId": "$posts.authorId",
-			      "author": "$posts.author",
-			      "text": "$posts.text",
-			      "title": "$posts.title",
-			      "tags": "$posts.tags",
-			      "downvotes": "$posts.downvotes",
-			      "upvotes": "$posts.upvotes",
-			      "date": "$posts.date" }},
-			{"$sort": { sortby: -1 } },
-			{"$limit": lim},
-			{"$skip": skip}
-	
-		],
-		errorFunction(res)
-	);
-};
 
 app.get('/posts/:page/:endpage?', function(req, res) {
 
@@ -147,16 +120,13 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 	var perPage = 12;
 	var lim = getLimit(perPage, page, req.params.endpage);
 	var skip = perPage * page;
-    
-    if(authorId){
-    	byAuthorId(authorId, sortby, lim, skip, res);
-    } else{
-    	Post.find()
-		.sort(sortby)
-		.limit(lim)
-		.skip(skip)
-		.exec(errorFunction(res));
-    }
+    var query = authorId ? {"authorId" : authorId} : {};
+
+	Post.find(query)
+	.sort(sortby)
+	.limit(lim)
+	.skip(skip)
+	.exec(errorFunction(res));
 
 });
 
