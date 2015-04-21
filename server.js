@@ -22,6 +22,45 @@ db.on('error', console.error);
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
 mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
 
+var errorFunction = function(err,result) {
+	if (err) {
+		return res.send(500, err)
+	}
+	return res.json(result);
+};
+
+var getSortby = function(param){
+	var sortby = "-upvotes";
+	if(param == "-upvotes" || param == "-date"){
+		sortby = param;
+	}
+	return sortby;
+};
+
+var getStartPage = function(param){
+	var page = 0;
+	if(param){
+		page = parseInt(param);
+	}
+	return page;
+};
+
+var getLimit = function(perpage, page, param){
+
+	var lim = perPage;
+	if(param){
+		var endpage = parseInt(param);
+		if(endpage < page){
+			return res.send(500);
+		} else{
+			lim = perPage * (1 + endpage - page);
+		}
+	}
+	return lim;
+
+};
+
+
 app.get('/', function(req, res) {
 	res.send('NUHacks backend reached.');
 });
@@ -31,39 +70,8 @@ app.get('/post/:id', function(req, res) {
 	var id = req.params.id;
 
 	Post.findOne({_id : id})
-	.exec(function(err,post){
-		if (err) {
-			res.send(500, err);
-		}
-		res.json(post);
-	});
+	.exec(errorFunction);
 });
-
-
-app.get('/posts/authorId/:id', function(req, res) {
-	var authorId = req.params.id;
-
-	Post.aggregate(
-	    [
-			{ "$group": { 
-			    "_id": "$authorId", 
-			    "posts": {"$push": "$$ROOT"}
-			}},
-			{"$match": {"_id" : authorId}},
-			{"$unwind": "$posts"},
-			{"$sort": { "date": -1 } },
-			{"$limit": 10 }
-	
-		],
-		function(err,result) {
-			if (err) {
-					res.send(500, err)
-			}
-				res.json(result);
-		}
-	);
-});
-
 
 app.get('/search/:query', function(req, res){
 	options = {
@@ -96,45 +104,46 @@ app.get('/tags', function(req, res){
 	o.reduce = function (k, vals) {
 		return vals.length;
 	};
-	Post.mapReduce(o, function (err, results) {
-		if (err) {
-			return res.send(500, err);
-		}
-		res.json(results);
-	});
+	Post.mapReduce(o, errorFunction);
 });
 
-app.get('/posts/:page/:endpage?', function(req, res) {
-	var sortby = "-upvotes"
-	if(sortby == "-upvotes" || sortby == "-date"){
-		sortby = req.query.sortby;
-	}
-	var page = 0;
-	var perPage = 12;
-	var lim = perPage;
-	if(req.params.page){
-		page = parseInt(req.params.page);
-		if(req.params.endpage){
-			endpage = parseInt(req.params.endpage);
-			if(endpage < page){
-				return res.send(500);
-			} else{
-				lim = perPage * (1 + endpage - page);
-			}
-		}
-	}
-    
-	Post.find()
-	.sort(sortby)
-	.limit(lim)
-	.skip(perPage * page)
-	.exec(function(err, posts) {
-		if (err) {
-			res.send(err);
-		}
-		res.json(posts);
-	});
+var byAuthorId = function(authorId, sortby, lim, skip){
+	Post.aggregate(
+	    [
+			{ "$group": { 
+			    "_id": "$authorId", 
+			    "posts": {"$push": "$$ROOT"}
+			}},
+			{"$match": {"_id" : authorId}},
+			{"$unwind": "$posts"},
+			{"$sort": { sortby: -1 } },
+			{"$limit": lim}
+			{"$skip": skip}
 	
+		],
+		errorFunction
+	);
+};
+
+app.get('/posts/:page/:endpage?', function(req, res) {
+
+	var authorId = query.params.authorId;
+	var sortby = getSortby(query.params.sortby)
+	var page = getStartPage(req.params.page);
+	var perPage = 12;
+	var lim = getLimit(perPage, page, req.params.endpage);
+	var skip = perPage * page;
+    
+    if(authorId){
+    	byAuthorId(authorId, sortby, lim, skip);
+    } else{
+    	Post.find()
+		.sort(sortby)
+		.limit(lim)
+		.skip(skip)
+		.exec(errorFunction);
+    }
+
 });
 
 
