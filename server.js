@@ -78,17 +78,19 @@ app.get('/post/:id', function(req, res) {
 
 
 app.get('/search_hack/:query',function(req,res){
+	var keyword=req.params.query;
+	Post.createIndex({subject: "text"});
 	Post.find(
-		{$text :{$search :req.params.query}},
-		{score :{$meta: "tscore"}}
+		{$text :{$search : keyword }},
+		{score :{$meta: "textScore"}}
 		)
-		.sort({ score : {$meta :'tscore'}})
-		.limit(20)
+		.sort({ score : {$meta :"textScore"}})
 		.exec(function(err,posts){
+
 			if (err) {
 			res.send(500, err);
 		}
-		res.json(post);
+		// res.json(post);
 	});
 });
 
