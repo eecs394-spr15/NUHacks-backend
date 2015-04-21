@@ -120,6 +120,16 @@ var byAuthorId = function(authorId, sortby, lim, skip, res){
 			}},
 			{"$match": {"_id" : authorId}},
 			{"$unwind": "$posts"},
+			{"$project":{
+			      "_id": "$posts._id",
+			      "authorId": "$posts.authorId",
+			      "author": "$posts.author",
+			      "text": "$posts.text",
+			      "title": "$posts.title",
+			      "tags": "$posts.tags",
+			      "downvotes": "$posts.downvotes",
+			      "upvotes": "$posts.upvotes",
+			      "date": "$posts.date" }},
 			{"$sort": { sortby: -1 } },
 			{"$limit": lim},
 			{"$skip": skip}
