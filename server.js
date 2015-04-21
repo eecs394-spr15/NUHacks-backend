@@ -134,7 +134,7 @@ var byAuthorId = function(authorId, sortby, lim, skip){
 			{"$match": {"_id" : authorId}},
 			{"$unwind": "$posts"},
 			{"$sort": { sortby: -1 } },
-			{"$limit": lim}
+			{"$limit": lim},
 			{"$skip": skip}
 	
 		],
