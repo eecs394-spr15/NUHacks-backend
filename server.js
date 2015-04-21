@@ -20,13 +20,16 @@ app.use(cors());
 
 db.on('error', console.error);
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
-mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
+// mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
+mongoose.connect('mongodb://' + (auth.user) + ':' + (auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
 
-var errorFunction = function(err,result) {
-	if (err) {
-		return res.send(500, err)
-	}
-	return res.json(result);
+var errorFunction = function(res){
+	return function(err,result) {
+		if (err) {
+			return res.send(500, err)
+		}
+		return res.json(result);
+	};
 };
 
 var getSortby = function(param){
@@ -70,7 +73,7 @@ app.get('/post/:id', function(req, res) {
 	var id = req.params.id;
 
 	Post.findOne({_id : id})
-	.exec(errorFunction);
+	.exec(errorFunction(res));
 });
 
 
@@ -121,10 +124,10 @@ app.get('/tags', function(req, res){
 	o.reduce = function (k, vals) {
 		return vals.length;
 	};
-	Post.mapReduce(o, errorFunction);
+	Post.mapReduce(o, errorFunction(res));
 });
 
-var byAuthorId = function(authorId, sortby, lim, skip){
+var byAuthorId = function(authorId, sortby, lim, skip, res){
 	Post.aggregate(
 	    [
 			{ "$group": { 
@@ -138,7 +141,7 @@ var byAuthorId = function(authorId, sortby, lim, skip){
 			{"$skip": skip}
 	
 		],
-		errorFunction
+		errorFunction(res)
 	);
 };
 
@@ -152,13 +155,13 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 	var skip = perPage * page;
     
     if(authorId){
-    	byAuthorId(authorId, sortby, lim, skip);
+    	byAuthorId(authorId, sortby, lim, skip, res);
     } else{
     	Post.find()
 		.sort(sortby)
 		.limit(lim)
 		.skip(skip)
-		.exec(errorFunction);
+		.exec(errorFunction(res));
     }
 
 });
