@@ -39,6 +39,20 @@ app.get('/post/:id', function(req, res) {
 	});
 });
 
+app.get('/search_hack/:query',function(req,res){
+	Post.find(
+		{$text :{$search :req.params.query}},
+		{score :{$meta: "tscore"}}
+		)
+		.sort({ score : {$meta :'tscore'}})
+		.limit(20)
+		.exec(function(err,posts){
+			if (err) {
+			res.send(500, err);
+		}
+		res.json(post);
+	});
+});
 
 app.get('/posts/authorId/:id', function(req, res) {
 	var authorId = req.params.id;
