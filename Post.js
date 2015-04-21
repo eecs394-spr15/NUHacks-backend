@@ -15,5 +15,5 @@ var postSchema = new mongoose.Schema({
 });
 
 postSchema.plugin(textSearch);
-postSchema.index({tags: "text"});
+postSchema.index({text: "text"});
 module.exports = mongoose.model('Post', postSchema);

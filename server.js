@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	// auth = require('./auth.js'),
+	//auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
@@ -79,36 +79,18 @@ app.get('/post/:id', function(req, res) {
 
 app.get('/search_hack/:query',function(req,res){
 	var keyword=req.params.query;
-	Post.createIndex({subject: "text"});
 	Post.find(
 		{$text :{$search : keyword }},
 		{score :{$meta: "textScore"}}
 		)
 		.sort({ score : {$meta :"textScore"}})
-		.exec(function(err,posts){
-
-			if (err) {
-			res.send(500, err);
-		}
-		// res.json(post);
-	});
+		.exec(errorFunction(res));
 });
 
 
 app.get('/search/:query', function(req, res){
-	options = {
-		limit: 10
-	};
-	Post.textSearch(req.params.query, options, function(err, results){
-		if (err) {
-			return res.send(500, err);
-		}
-		lst = [];
-		results.results.forEach(function(elem, i, array){
-			lst.push(elem["obj"]);
-		})
-		res.json(lst);
-	});
+	Post.find({tags: {$in: req.params.query.split(" ")}}).
+	exec(errorFunction(res));
 });
 
 
