@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	// auth = require('./auth.js'),
+	auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
@@ -45,7 +45,7 @@ var getStartPage = function(param){
 	return page;
 };
 
-var getLimit = function(perpage, page, param){
+var getLimit = function(perPage, page, param){
 
 	var lim = perPage;
 	if(param){
@@ -144,8 +144,8 @@ var byAuthorId = function(authorId, sortby, lim, skip){
 
 app.get('/posts/:page/:endpage?', function(req, res) {
 
-	var authorId = query.params.authorId;
-	var sortby = getSortby(query.params.sortby)
+	var authorId = req.query.authorId;
+	var sortby = getSortby(req.query.sortby)
 	var page = getStartPage(req.params.page);
 	var perPage = 12;
 	var lim = getLimit(perPage, page, req.params.endpage);
