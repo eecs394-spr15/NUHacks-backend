@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	auth = require('./auth.js'),
+	// auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
