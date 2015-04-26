@@ -209,9 +209,6 @@ app.put('/post/:id', function(req, res) {
 
 app.delete('/post/:id', function(req, res) {
 	var id = req.params.id;
-	if (_.isEmpty(req.body)) {
-		return res.send(400);
-	}
 
 	Post.findById(id, function(err, post) {
 		if (err) {
