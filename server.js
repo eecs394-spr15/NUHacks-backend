@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	auth = require('./auth.js'),
+	// auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
@@ -21,12 +21,15 @@ app.use(cors());
 db.on('error', console.error);
 // mongoose.connect('mongodb://localhost:27017/nuhacks');
 mongoose.connect('mongodb://' + (process.env.DB_USER || auth.user) + ':' + (process.env.DB_PASS || auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
+//mongoose.connect('mongodb://' + (auth.user) + ':' + (auth.pass) + '@ds061691.mongolab.com:61691/nuhacks');
 
-var errorFunction = function(err,result) {
-	if (err) {
-		return res.send(500, err)
-	}
-	return res.json(result);
+var errorFunction = function(res){
+	return function(err,result) {
+		if (err) {
+			return res.send(500, err)
+		}
+		return res.json(result);
+	};
 };
 
 var getSortby = function(param){
@@ -70,40 +73,24 @@ app.get('/post/:id', function(req, res) {
 	var id = req.params.id;
 
 	Post.findOne({_id : id})
-	.exec(errorFunction);
+	.exec(errorFunction(res));
 });
 
 
 app.get('/search_hack/:query',function(req,res){
+	var keyword=req.params.query;
 	Post.find(
-		{$text :{$search :req.params.query}},
-		{score :{$meta: "tscore"}}
+		{$text :{$search : keyword }},
+		{score :{$meta: "textScore"}}
 		)
-		.sort({ score : {$meta :'tscore'}})
-		.limit(20)
-		.exec(function(err,posts){
-			if (err) {
-			res.send(500, err);
-		}
-		res.json(post);
-	});
+		.sort({ score : {$meta :"textScore"}})
+		.exec(errorFunction(res));
 });
 
 
 app.get('/search/:query', function(req, res){
-	options = {
-		limit: 10
-	};
-	Post.textSearch(req.params.query, options, function(err, results){
-		if (err) {
-			return res.send(500, err);
-		}
-		lst = [];
-		results.results.forEach(function(elem, i, array){
-			lst.push(elem["obj"]);
-		})
-		res.json(lst);
-	});
+	Post.find({tags: {$in: req.params.query.split(" ")}}).
+	exec(errorFunction(res));
 });
 
 
@@ -121,26 +108,9 @@ app.get('/tags', function(req, res){
 	o.reduce = function (k, vals) {
 		return vals.length;
 	};
-	Post.mapReduce(o, errorFunction);
+	Post.mapReduce(o, errorFunction(res));
 });
 
-var byAuthorId = function(authorId, sortby, lim, skip){
-	Post.aggregate(
-	    [
-			{ "$group": { 
-			    "_id": "$authorId", 
-			    "posts": {"$push": "$$ROOT"}
-			}},
-			{"$match": {"_id" : authorId}},
-			{"$unwind": "$posts"},
-			{"$sort": { sortby: -1 } },
-			{"$limit": lim},
-			{"$skip": skip}
-	
-		],
-		errorFunction
-	);
-};
 
 app.get('/posts/:page/:endpage?', function(req, res) {
 
@@ -150,16 +120,13 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 	var perPage = 12;
 	var lim = getLimit(perPage, page, req.params.endpage);
 	var skip = perPage * page;
-    
-    if(authorId){
-    	byAuthorId(authorId, sortby, lim, skip);
-    } else{
-    	Post.find()
-		.sort(sortby)
-		.limit(lim)
-		.skip(skip)
-		.exec(errorFunction);
-    }
+    var query = authorId ? {"authorId" : authorId} : {};
+
+	Post.find(query)
+	.sort(sortby)
+	.limit(lim)
+	.skip(skip)
+	.exec(errorFunction(res));
 
 });
 
@@ -172,13 +139,9 @@ app.post('/post', function(req, res) {
 	newPost.title = req.body.title;
 	newPost.text = req.body.text;
 	newPost.author = req.body.author;
+	newPost.authorId = req.body.authorId;
 	newPost.tags = req.body.tags;
-	newPost.save(function(err, post) {
-		if (err) {
-			res.send(500, err);
-		}
-		res.json(post);
-	});
+	newPost.save(errorFunction(res));
 });
 
 app.put('/post/:id', function(req, res) {
