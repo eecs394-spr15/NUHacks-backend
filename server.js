@@ -165,7 +165,7 @@ app.put('/post/:id', function(req, res) {
 		if (err) {
 			return res.send(500, err);
 		}
-		res.json(true);
+		res.send(true);
 	});
 
 });
@@ -178,11 +178,11 @@ app.put('/post/:id/vote/:direction', function(req, res) {
 	}
 
 	Post.findOneAndUpdate({_id: id }, { $inc: { upvotes: direction * 1 }})
-	  .exec(function(err, res) { 
+	  .exec(function(err) { 
 	    if (err) {
 			return res.send(500, err);
 		}
-		res.json(true); 
+		res.send(true); 
 	  });
 
 });
