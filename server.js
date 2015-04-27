@@ -7,7 +7,7 @@ var express = require('express'),
 	db = mongoose.connection,
 	bodyParser = require('body-parser'),
 	_ = require('underscore'),
-	// auth = require('./auth.js'),
+	//auth = require('./auth.js'),
 	cors = require('cors'),
 	app = express();
 
@@ -167,6 +167,23 @@ app.put('/post/:id', function(req, res) {
 		}
 		res.json(true);
 	});
+
+});
+
+app.put('/post/:id/vote/:direction', function(req, res) {
+	var id = req.params.id;
+	var direction = parseInt(req.params.direction);
+	if(Math.abs(direction) != 1){
+		direction /= Math.abs(direction);
+	}
+
+	Post.findOneAndUpdate({_id: id }, { $inc: { upvotes: direction * 1 }})
+	  .exec(function(err, res) { 
+	    if (err) {
+			return res.send(500, err);
+		}
+		res.json(true); 
+	  });
 
 });
 
