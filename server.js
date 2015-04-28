@@ -54,7 +54,7 @@ var getLimit = function(perPage, page, param, res){
 	if(param){
 		var endpage = parseInt(param);
 		if(endpage < page){
-			return res.send(500);
+			endpage = page;
 		} else{
 			lim = perPage * (1 + endpage - page);
 		}
