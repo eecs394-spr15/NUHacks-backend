@@ -48,7 +48,7 @@ var getStartPage = function(param){
 	return page;
 };
 
-var getLimit = function(perPage, page, param){
+var getLimit = function(perPage, page, param, res){
 
 	var lim = perPage;
 	if(param){
@@ -118,7 +118,7 @@ app.get('/posts/:page/:endpage?', function(req, res) {
 	var sortby = getSortby(req.query.sortby)
 	var page = getStartPage(req.params.page);
 	var perPage = 12;
-	var lim = getLimit(perPage, page, req.params.endpage);
+	var lim = getLimit(perPage, page, req.params.endpage, res);
 	var skip = perPage * page;
     var query = authorId ? {"authorId" : authorId} : {};
 
