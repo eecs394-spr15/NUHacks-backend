@@ -173,11 +173,8 @@ app.put('/post/:id', function(req, res) {
 app.put('/post/:id/vote/:direction', function(req, res) {
 	var id = req.params.id;
 	var direction = parseInt(req.params.direction);
-	if(Math.abs(direction) != 1){
-		direction /= Math.abs(direction);
-	}
-
-	Post.findOneAndUpdate({_id: id }, { $inc: { upvotes: direction * 1 }})
+	
+	Post.findOneAndUpdate({_id: id }, { $inc: { upvotes: direction }})
 	  .exec(function(err) { 
 	    if (err) {
 			return res.send(500, err);
